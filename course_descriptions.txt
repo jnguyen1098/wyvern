@@ -82,7 +82,8 @@ AGR*1110 Introduction to the Agri-Food Systems F (6-0) [1.00]
 This introductory course provides an overview of Canadian and global agri-food systems. Students will be introduced to many different facets of agriculture, including primary production (conventional and organic) of commodity, mid-value and high-value crops, and livestock. Students will explore the agri-food system by tracing consumer end-products back to primary production. Modern, industrial agri-food systems as well as subsistence farming will be discussed. The course incorporates an experiential learning component in which students will explore a new agri-food opportunity for Ontario by designing and assessing the value chain.
 Restriction(s):	AGR*1100 . AGR*1250 . Restricted to students in BAH.FARE,
 BSC(AGR), Minor in Agriculture
-Department(s): Department of Plant Agriculture, Department of Animal Biosciences Location(s): Guelph
+Department(s): Department of Plant Agriculture, Department of Animal Biosciences
+Location(s): Guelph
 AGR*2050 Agroecology W (3-0) [0.50]
 This course considers the interactions of all important biophysical, technical and socioeconomic components of farming systems and examines these systems as the fundamental units of study. Mineral cycles, energy transformations, biological processes and socioeconomic relationships are analyzed as a whole in an interdisciplinary fashion.
 Prerequisite(s):	(AGR*1110 or AGR*2150), (BIOL*1050 or BIOL*1070)
