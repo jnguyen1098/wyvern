@@ -1,17 +1,11 @@
-# Gryphtree
-# Analyzes course descriptions
-
-import pygraphviz
-import pydot
-
-import re
-
-import requests
-import time
-
-import csv
+# Wyvern
 
 from bs4 import BeautifulSoup
+import requests
+import csv
+import sys
+import re
+
 
 gryph_url_default = "https://www.uoguelph.ca/registrar/calendars/undergraduate/current/c12/"
 
@@ -43,34 +37,36 @@ for link in sidebar_links:
     except:
         pass
 
+print("Urls ready:")
 for faculty, link in faculties.items():
     print(link)
 
-deathgex = re.compile(r"^([A-Z]{2,4})\*([0-9]{4}) ([A-Za-z0-9 \?–\&'\(\)\:\/,\.\-]+) ([SFWU,]{1,7}|P1|P2|P3|P4) \(([0-9V\.]{1,3})\-([0-9V\.]{1,3})\) \[([0-9]\.[0-9][0-9])\]$")
-restrictiongex = re.compile(r"\nRestriction\(s\)\:\n(.*)")
-prereqgex = re.compile(r"\nPrerequisite\(s\):\n(.*)")
-coreqgex = re.compile(r"\nCo\-requisite\(s\):\n(.*)")
-equategex = re.compile(r"\nEquate\(s\):\n(.*)")
-departmentgex = re.compile(r"\nDepartment\(s\):\n(.*)")
-offeringgex = re.compile(r"\nOffering\(s\):\n(.*)")
-externalgex = re.compile(r"\nExternal Course Code\(s\):\n(.*)")
+print("Getting regex ready...")
+deathgex        = re.compile(r"^([A-Z]{2,4})\*([0-9]{4}) ([A-Za-z0-9 \?–\&'\(\)\:\/,\.\-]+) ([SFWU,]{1,7}|P1|P2|P3|P4) \(([0-9V\.]{1,3})\-([0-9V\.]{1,3})\) \[([0-9]\.[0-9][0-9])\]$")
+restrictiongex  = re.compile(r"\nRestriction\(s\)\:\n(.*)")
+prereqgex       = re.compile(r"\nPrerequisite\(s\):\n(.*)")
+coreqgex        = re.compile(r"\nCo\-requisite\(s\):\n(.*)")
+equategex       = re.compile(r"\nEquate\(s\):\n(.*)")
+departmentgex   = re.compile(r"\nDepartment\(s\):\n(.*)")
+offeringgex     = re.compile(r"\nOffering\(s\):\n(.*)")
+externalgex     = re.compile(r"\nExternal Course Code\(s\):\n(.*)")
 
-# AGGR1110 is the only course that has location lmfao
 
-total = 0
-
+print("Overwriting 'courses.csv' for export...")
 guelphWriter = csv.writer(open('courses.csv', 'w'))
 guelphWriter.writerow(['Common Name', 'Faculty', 'Number', 'Course Title', 'Schedule', 'Lecture Hours', 'Lab Hours', 'Weight', 'Description', 'Prerequisites', 'Corequisites', 'Restrictions', 'Equates', 'Departments', 'Offerings', 'External Course Codes'])
 
 curr_fac = 0
+total = 0
 
+print("Iterating over faculties...")
 for key, value in faculties.items():
+    cnt = 0
     curr_fac += 1
     print("Scraping", key, "({}/{})".format(curr_fac, len(faculties)))
     page = requests.get(value)
     faculty = BeautifulSoup(page.content, 'html.parser')
     courses = faculty.find_all("div", class_="course")
-    cnt = 0
     for course in courses:
         # Variables
         common_name                 = None
@@ -197,22 +193,12 @@ for key, value in faculties.items():
         print("     ")
         print("     ")
         """
-        
         guelphWriter.writerow([common_name, faculty, number, title, semesters, lecture_hours, lab_hours, weight, description_text, prerequisite_text, corequisite_text, restriction_text, equate_text, department_text, offering_text, external_course_code_text])
-
         cnt += 1
+
+    # Done
     print("Scraped", cnt, "courses in", key)
     print("")
     total += cnt
 
 print("Scraped", total, "courses at uog")
-
-exit()
-
-G = pygraphviz.AGraph('testgraph.dot')
-G.layout(prog='dot')
-G.add_node('b')
-G.write('output.gv')
-
-graphs = pydot.graph_from_dot_file('output.gv')
-graphs[0].write_svg('output.svg')
