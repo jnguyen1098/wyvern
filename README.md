@@ -1,3 +1,3 @@
-# Gryphtree
+# Wyvern
 
-This is a project I've been wanting to do for a while. It takes a PDF of the course descriptions and tries to create a tree out of it so as to see the relationships between courses and their prerequisites
+Scrapes the [uoguelph.ca](https://uoguelph.ca) courselist and writes it all to a .CSV file
