@@ -10,15 +10,15 @@ def main(argv):
 
     gryph_url_default = "https://www.uoguelph.ca/registrar/calendars/undergraduate/current/c12/"
 
-    if len(argv) > 2:
-        print("Usage:", argv[0], "[calendarurl]")
+    if len(argv) > 3 or len(argv) == 1:
+        print("Usage:", argv[0], "outfile [calendarurl]")
         exit()
 
-    if len(argv) == 1:
+    if len(argv) == 2:
         print("No calendar url specified; will default to", gryph_url_default)
         gryph_url = gryph_url_default
     else:
-        gryph_url = argv[1]
+        gryph_url = argv[2]
 
     print("Loading...", gryph_url)
     page = requests.get(gryph_url)
@@ -54,7 +54,7 @@ def main(argv):
 
 
     print("Overwriting 'courses.csv' for export...")
-    guelphWriter = csv.writer(open('courses.csv', 'w'))
+    guelphWriter = csv.writer(open(argv[1], 'w'))
     guelphWriter.writerow(['Common Name', 'Faculty', 'Number', 'Course Title', 'Schedule', 'Lecture Hours', 'Lab Hours', 'Weight', 'Description', 'Prerequisites', 'Corequisites', 'Restrictions', 'Equates', 'Departments', 'Offerings', 'External Course Codes'])
 
     curr_fac = 0
