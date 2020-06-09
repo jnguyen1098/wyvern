@@ -1,1 +1,1 @@
-rm -rf *.svg *.png
+rm -rf *.svg *.png *.gv
