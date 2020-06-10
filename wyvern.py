@@ -2,47 +2,74 @@
 
 from bs4 import BeautifulSoup
 import requests
+import argparse
+import logging
 import csv
 import sys
 import re
 
+gryph_url_default = "https://www.uoguelph.ca/registrar/calendars/undergraduate/current/c12/"
+
+
 def main(argv):
+    
+    # Parse arguments
+    parser = argparse.ArgumentParser()
 
-    gryph_url_default = "https://www.uoguelph.ca/registrar/calendars/undergraduate/current/c12/"
+    # File output arg and optional verbose/url args
+    parser.add_argument('outfile', help = 'output file name')
+    parser.add_argument('-v', '--verbose', help = 'verbose debug output', action = 'store_true')
+    parser.add_argument('-u', '--url', help = 'specify calendar URL')
 
-    if len(argv) > 3 or len(argv) == 1:
-        print("Usage:", argv[0], "outfile [calendarurl]")
-        exit()
+    # Parse args
+    args = parser.parse_args()
 
-    if len(argv) == 2:
-        print("No calendar url specified; will default to", gryph_url_default)
-        gryph_url = gryph_url_default
-    else:
-        gryph_url = argv[2]
+    # Use args
+    logging.basicConfig(level = logging.DEBUG if args.verbose else logging.INFO,
+            format = '[%(levelname)s] %(message)s')
 
-    print("Loading...", gryph_url)
+    # URL
+    gryph_url = args.url if args.url else gryph_url_default
+    logging.info(f'Using URL {gryph_url}')
+
+    # Loading page
+    logging.info(f'Loading calendar page...')
     page = requests.get(gryph_url)
 
-    print("Creating BeautifulSoup...")
+    # Creating BeautifulSoup
+    logging.debug('Creating BeautifulSoup...')
     homepage = BeautifulSoup(page.content, 'html.parser')
 
-    faculties = {}
-
-    print("Scraping course codes...")
+    # Scraping course codes
+    logging.info('Scraping course codes...')
+    logging.debug('Finding all <a> tags')
     sidebar_links = homepage.find_all("a")
+    logging.debug(f'Found {len(sidebar_links)} links\n')
+    faculties = {}
+    count = 0
     for link in sidebar_links:
+        count += 1
+        logging.debug(f'({count}/{len(sidebar_links)}) Examining {link} for faculty')
         try:
-            match = re.match(r'\.\/c12(.+)\.shtml', link['href'])
-            if match:
-                faculties[match.group(1)] = gryph_url + match.group(0)[2:]
-        except:
-            pass
+            if link.has_attr('href'):
+                match = re.match(r'\.\/c12(.+)\.shtml', link['href'])
+                if match:
+                    faculties[match.group(1)] = gryph_url + match.group(0)[2:]
+                    logging.debug(f'Found faculty "{match.group(1)}" ({link.text})\n')
+                else:
+                    logging.debug('This link is not a faculty\n')
+            else:
+                logging.debug('Link lacks "href", skipping')
+        except Exception as e:
+            exception_prompt(e)
 
-    print("Urls ready:")
+    # Printing URLs if in debug
+    logging.info('Successfully created URLs...')
     for faculty, link in faculties.items():
-        print(link)
+        logging.debug(link)
 
-    print("Getting regex ready...")
+    # Compiling regex
+    logging.debug('Compiling monster regex...')
     deathgex        = re.compile(r"^([A-Z]{2,4})\*([0-9]{4}) ([A-Za-z0-9 \?–\&'\(\)\:\/,\.\-]+) ([SFWU,]{1,7}|P1|P2|P3|P4) \(([0-9V\.]{1,3})\-([0-9V\.]{1,3})\) \[([0-9]\.[0-9][0-9])\]$")
     restrictiongex  = re.compile(r"\nRestriction\(s\)\:\n(.*)")
     prereqgex       = re.compile(r"\nPrerequisite\(s\):\n(.*)")
@@ -52,10 +79,18 @@ def main(argv):
     offeringgex     = re.compile(r"\nOffering\(s\):\n(.*)")
     externalgex     = re.compile(r"\nExternal Course Code\(s\):\n(.*)")
 
-
-    print("Overwriting 'courses.csv' for export...")
-    guelphWriter = csv.writer(open(argv[1], 'w'))
-    guelphWriter.writerow(['Common Name', 'Faculty', 'Number', 'Course Title', 'Schedule', 'Lecture Hours', 'Lab Hours', 'Weight', 'Description', 'Prerequisites', 'Corequisites', 'Restrictions', 'Equates', 'Departments', 'Offerings', 'External Course Codes'])
+    # Attempting to open output file
+    logging.info(f'Creating output file {args.outfile}')
+    try:
+        guelphWriter = csv.writer(open(argv[1], 'w'))
+        guelphWriter.writerow(['Common Name', 'Faculty', 'Number', 'Course Title',
+                'Schedule', 'Lecture Hours', 'Lab Hours', 'Weight', 'Description',
+                'Prerequisites', 'Corequisites', 'Restrictions', 'Equates', 'Departments',
+                'Offerings', 'External Course Codes'])
+    except Exception as e:
+        logging.critical(f'Critical exception: {e}')
+        logging.critical(f'Program halting')
+        exit()
 
     curr_fac = 0
     total = 0
@@ -202,7 +237,14 @@ def main(argv):
         print("")
         total += cnt
 
-    print("Scraped", total, "courses at uog")
+    logging.info(f'Scraped {total} courses from {gryph_url}')
+    return
+
+def exception_prompt(e):
+    logging.error(f'Exception: {e}')
+    logging.error('Press any key to continue...')
+    input('')
+    return
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
