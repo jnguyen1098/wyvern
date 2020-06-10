@@ -2,10 +2,16 @@
 
 Scrapes the courselist of the [University of Guelph](https://uoguelph.ca) website and writes it all to a .CSV file. I used BeautifulSoup to traverse the DOM.
 
-Example run:
-
 ```
-python3 wyvern.py courses.csv
+usage: wyvern.py [-h] [-v] [-u URL] outfile
+
+positional arguments:
+  outfile              output file name
+
+  optional arguments:
+    -h, --help         show this help message and exit
+    -v, --verbose      verbose debug output
+    -u URL, --url URL  specify calendar URL
 ```
 
 You'd only need to specify the `[calendarurl]` if the default URL becomes outdated. Please make an issue if there are any changes to the UofG website that break the scraper.
