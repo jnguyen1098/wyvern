@@ -8,7 +8,8 @@ import csv
 import sys
 import re
 
-gryph_url_default = "https://www.uoguelph.ca/registrar/calendars/undergraduate/current/c12/"
+# gryph_url_default = "https://www.uoguelph.ca/registrar/calendars/undergraduate/current/c12/"
+GRYPH_URL_DEFAULT = "https://calendar.uoguelph.ca/undergraduate-calendar/course-descriptions/"
 
 
 def main(argv):
@@ -29,7 +30,7 @@ def main(argv):
             format = '[%(levelname)s] %(message)s')
 
     # URL
-    gryph_url = args.url if args.url else gryph_url_default
+    gryph_url = args.url if args.url else GRYPH_URL_DEFAULT
     logging.info(f'Using URL {gryph_url}')
 
     # Loading page
