@@ -53,7 +53,7 @@ def main(argv):
         logging.debug(f'({count}/{len(sidebar_links)}) Examining {link} for faculty')
         try:
             if link.has_attr('href'):
-                match = re.match(r'\.\/c12(.+)\.shtml', link['href'])
+                match = re.match(r"/undergraduate-calendar/course-descriptions/(.+)/", link["href"])
                 if match:
                     faculties[match.group(1)] = gryph_url + match.group(0)[2:]
                     logging.debug(f'Found faculty "{match.group(1)}" ({link.text})\n')
