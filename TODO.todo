@@ -1,0 +1,1 @@
+(^.*  (((Winter|Summer|Fall) Only)|(Winter and Summer)|(Winter and Fall)|(Summer and Fall)|(Fall and Winter)|(Summer, Fall, and Winter)|(Unspecified)|(DVM Phase (1|2|3|4)))  .*$)\n
