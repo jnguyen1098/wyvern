@@ -105,6 +105,8 @@ def main(argv):
         faculty = BeautifulSoup(page.content, 'html.parser')
         courses = faculty.find_all("div", class_="courseblock")
         for course in courses:
+            print(course)
+            exit()
             # Variables
             common_name                 = None
             faculty                     = None
