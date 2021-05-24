@@ -9,7 +9,7 @@ import sys
 import re
 
 # gryph_url_default = "https://www.uoguelph.ca/registrar/calendars/undergraduate/current/c12/"
-GRYPH_URL_DEFAULT = "https://calendar.uoguelph.ca/undergraduate-calendar/course-descriptions/"
+GRYPH_URL_DEFAULT = "https://calendar.uoguelph.ca/"
 
 
 def main(argv):
@@ -53,9 +53,9 @@ def main(argv):
         logging.debug(f'({count}/{len(sidebar_links)}) Examining {link} for faculty')
         try:
             if link.has_attr('href'):
-                match = re.match(r"/undergraduate-calendar/course-descriptions/(.+)/", link["href"])
+                match = re.match(r"/undergraduate-calendar/course-descriptions/(.+)/$", link["href"])
                 if match:
-                    faculties[match.group(1)] = gryph_url + match.group(0)[2:]
+                    faculties[match.group(1)] = gryph_url + match.group(0)[1:]
                     logging.debug(f'Found faculty "{match.group(1)}" ({link.text})\n')
                 else:
                     logging.debug('This link is not a faculty\n')
@@ -103,7 +103,7 @@ def main(argv):
         print("Scraping", key, "({}/{})".format(curr_fac, len(faculties)))
         page = requests.get(value)
         faculty = BeautifulSoup(page.content, 'html.parser')
-        courses = faculty.find_all("div", class_="course")
+        courses = faculty.find_all("div", class_="courseblock")
         for course in courses:
             # Variables
             common_name                 = None
