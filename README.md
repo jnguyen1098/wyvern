@@ -1,5 +1,7 @@
 # Wyvern
 
+5/29/2021 update: very broken at the moment, doesn't work unless you use a link that predates the time period `current` (for example `2017-2018`)
+
 Scrapes the courselist of the [University of Guelph](https://uoguelph.ca) website and writes it all to a .CSV file. I used BeautifulSoup to traverse the DOM.
 
 ```
