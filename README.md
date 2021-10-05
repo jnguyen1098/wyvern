@@ -1,5 +1,7 @@
 # Wyvern
 
+**October 2021 Update**: I have been busy and unable to update this repository—there are some tidbits in the other branch though where I've experimented a little bit with reading the new DOM. Assuming the old calendar links are still online, Wyvern should continue to work. 
+
 Scrapes the courselist of the [University of Guelph](https://uoguelph.ca) website and writes it all to a .CSV file. I used BeautifulSoup to traverse the DOM.
 
 ```
